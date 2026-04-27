@@ -15,5 +15,21 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 
+  api:
+    build: .
+    container_name: iot_api
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: iot_maintenance
+      DB_USER: iot_user
+      DB_PASSWORD: iot_password
+      PORT: 3000
+    depends_on:
+      - mysql
+
 volumes:
   mysql_data:
