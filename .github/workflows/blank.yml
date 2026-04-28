@@ -7,8 +7,26 @@ on:
     branches: [ "main" ]
 
 jobs:
+  detect-secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hent kode
+        uses: actions/checkout@v4
+
+      - name: Sæt Python op
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Installer detect-secrets
+        run: pip install detect-secrets
+
+      - name: Scan for secrets
+        run: detect-secrets scan --baseline .secrets.baseline
+
   build:
     runs-on: ubuntu-latest
+    needs: detect-secrets
 
     steps:
       - name: Hent kode

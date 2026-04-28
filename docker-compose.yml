@@ -6,10 +6,10 @@ services:
     container_name: iot_mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: iot_maintenance
-      MYSQL_USER: iot_user
-      MYSQL_PASSWORD: iot_password
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
@@ -22,12 +22,12 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_NAME: iot_maintenance
-      DB_USER: iot_user
-      DB_PASSWORD: iot_password
-      PORT: 3000
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      PORT: ${PORT}
     depends_on:
       - mysql
 
