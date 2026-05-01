@@ -29,6 +29,7 @@ services:
       DB_USER: ${MYSQL_USER}
       DB_PASSWORD: ${MYSQL_PASSWORD}
       PORT: ${PORT}
+      PYTHONUNBUFFERED: 1
     depends_on:
       - mysql
 
