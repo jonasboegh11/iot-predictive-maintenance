@@ -9,3 +9,7 @@ db-down:
 
 install:
 	pip install -r requirements.txt
+
+rebuild:
+	docker-compose down
+	docker-compose up --build -d

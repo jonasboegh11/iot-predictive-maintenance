@@ -4,36 +4,38 @@ from src.config.database import get_db
 def receive_sensor_data():
     try:
         data = request.get_json()
-        
+
         if not data:
             return jsonify({"error": "Ugyldigt eller tomt request body"}), 400
 
-        if not all(k in data for k in ["device_id", "sensor_type", "value", "unit"]):
-            return jsonify({"error": "Manglende felter"}), 400
+        # Håndter både enkelt objekt og array
+        if isinstance(data, dict):
+            data = [data]
 
-        device_id = data["device_id"]
-        sensor_type = data["sensor_type"]
-        value = data["value"]
-        unit = data["unit"]
+        if not isinstance(data, list):
+            return jsonify({"error": "Ugyldigt format"}), 400
+
+        for item in data:
+            if not all(k in item for k in ["device_id", "sensor_type", "value", "unit"]):
+                return jsonify({"error": "Manglende felter i et af objekterne"}), 400
 
         db = get_db()
         cursor = db.cursor()
 
-        # Gem sensor reading i databasen
-        cursor.execute(
-            "INSERT INTO sensor_readings (device_id, sensor_type, value, unit) VALUES (%s, %s, %s, %s)",
-            (device_id, sensor_type, value, unit)
-        )
-        db.commit()
-        reading_id = cursor.lastrowid
-
-        # Threshold check — anomaly detection
-        check_threshold(cursor, db, device_id, sensor_type, value)
+        ids = []
+        for item in data:
+            cursor.execute(
+                "INSERT INTO sensor_readings (device_id, sensor_type, value, unit) VALUES (%s, %s, %s, %s)",
+                (item["device_id"], item["sensor_type"], item["value"], item["unit"])
+            )
+            db.commit()
+            ids.append(cursor.lastrowid)
+            check_threshold(cursor, db, item["device_id"], item["sensor_type"], item["value"])
 
         cursor.close()
         db.close()
 
-        return jsonify({"message": "Sensor data modtaget", "id": reading_id}), 201
+        return jsonify({"message": f"{len(ids)} sensor readings modtaget", "ids": ids}), 201
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
