@@ -22,5 +22,8 @@ jobs:
       - name: Installer pakker
         run: pip install -r requirements.txt
 
+      - name: Kør tests
+        run: pytest tests/
+
       - name: Byg Docker image
         run: docker build -t iot-predictive-maintenance .
