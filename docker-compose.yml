@@ -31,5 +31,19 @@ services:
     depends_on:
       - mysql
 
+  grafana:
+    image: grafana/grafana:latest
+    container_name: iot_grafana
+    restart: always
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - mysql
+
 volumes:
   mysql_data:
+  grafana_data:
