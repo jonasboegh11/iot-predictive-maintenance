@@ -1,4 +1,5 @@
 from flask import Flask
+from prometheus_flask_exporter import PrometheusMetrics
 from dotenv import load_dotenv
 import os
 
@@ -9,6 +10,7 @@ from src.middleware.errorHandler import register_error_handlers
 load_dotenv()
 
 app = Flask(__name__)
+metrics = PrometheusMetrics(app)
 
 # Registrer routes
 app.register_blueprint(sensor_bp, url_prefix="/api/sensors")
