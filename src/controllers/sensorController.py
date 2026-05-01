@@ -4,6 +4,13 @@ from src.config.database import get_db
 def receive_sensor_data():
     try:
         data = request.get_json()
+        
+        if not data:
+            return jsonify({"error": "Ugyldigt eller tomt request body"}), 400
+
+        if not all(k in data for k in ["device_id", "sensor_type", "value", "unit"]):
+            return jsonify({"error": "Manglende felter"}), 400
+
         device_id = data["device_id"]
         sensor_type = data["sensor_type"]
         value = data["value"]
