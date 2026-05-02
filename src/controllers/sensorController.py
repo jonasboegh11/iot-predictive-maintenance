@@ -38,11 +38,21 @@ def check_threshold(cursor, db, device_id, sensor_type, value):
 
 def check_trend(cursor, db, device_id, sensor_type):
     try:
+        thresholds = {
+            "temperature":  {"normal": 50,   "warning": 70,   "critical": 90},
+            "rpm":          {"normal": 1200, "warning": 1600, "critical": 1800},
+            "power_output": {"normal": 1500, "warning": 1800, "critical": 2100},
+        }
+
+        threshold = thresholds.get(sensor_type)
+        if not threshold:
+            return
+
         trend_cursor = db.cursor()
         trend_cursor.execute(
             """SELECT value FROM sensor_readings 
                WHERE device_id = %s AND sensor_type = %s 
-               ORDER BY id ASC LIMIT 5""",
+               ORDER BY id DESC LIMIT 5""",
             (device_id, sensor_type)
         )
         rows = trend_cursor.fetchall()
@@ -50,7 +60,12 @@ def check_trend(cursor, db, device_id, sensor_type):
         if len(rows) < 5:
             return
 
-        values = [float(row[0]) for row in rows]
+        values = [float(row[0]) for row in reversed(rows)]
+
+        # Kun relevant hvis seneste værdi er i pre-warning zonen
+        if not (threshold["normal"] <= values[-1] < threshold["warning"]):
+            return
+
         stiger_konsekvent = all(values[i] < values[i+1] for i in range(len(values)-1))
 
         if stiger_konsekvent:
@@ -64,7 +79,7 @@ def check_trend(cursor, db, device_id, sensor_type):
                 """INSERT INTO alerts 
                    (device_id, sensor_type, triggered_value, threshold_value, severity, message)
                    VALUES (%s, %s, %s, %s, %s, %s)""",
-                (device_id, sensor_type, values[-1], values[0], "MEDIUM", message)
+                (device_id, sensor_type, values[-1], threshold["warning"], "MEDIUM", message)
             )
             db.commit()
 
