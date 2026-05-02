@@ -74,11 +74,15 @@ Støttede sensor typer: `temperature`, `rpm`, `power_output`
 
 Systemet genererer automatisk alerts når sensorværdier overskrides:
 
-| Sensor | Advarsel (MEDIUM) | Kritisk (HIGH) |
-|--------|-------------------|----------------|
-| Temperatur | 70°C | 90°C |
-| RPM | 1600 | 1800 |
-| Effekt (kW) | 1800 | 2100 |
+| Sensor | Normal (under) | Advarsel (MEDIUM) | Kritisk (HIGH) |
+|--------|---------------|-------------------|----------------|
+| Temperatur | 50°C | 70°C | 90°C |
+| RPM | 1200 | 1600 | 1800 |
+| Effekt (kW) | 1500 | 1800 | 2100 |
+
+Systemet overvåger også **stigende trends** i pre-warning zonen (mellem normal og advarsel).
+Hvis en sensor konsekvent stiger over de sidste 5 målinger og befinder sig i denne zone,
+genereres en MEDIUM alert — så man kan reagere *før* advarselgrænsen overskrides.
 
 ---
 
