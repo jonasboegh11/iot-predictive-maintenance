@@ -1,2 +1,2 @@
-password = "super_secret_password_123"
-api_key = "AKIAIOSFODNN7EXAMPLE"
+aws_secret = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+github_token = "ghp_1234567890abcdefghijklmnopqrstuvwxyz"
