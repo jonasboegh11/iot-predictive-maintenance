@@ -62,7 +62,7 @@ def check_trend(cursor, db, device_id, sensor_type):
 
         values = [float(row[0]) for row in reversed(rows)]
 
-        # Kun relevant hvis seneste værdi er i pre-warning zone
+        # Kun relevant hvis seneste værdi er i pre-warning zonen
         if not (threshold["normal"] <= values[-1] < threshold["warning"]):
             return
 
